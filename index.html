@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Night of the Thirteenth Simulation</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-2">
+  <h1 class="mb-3">Night of the Thirteenth Simulation</h1>
+
+  <div id="controls" class="mb-3">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <h6 class="mb-2">Basic Settings</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <label class="form-label small mb-1">Mode:</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="mode" id="modeSingle" value="single">
+              <label class="form-check-label small" for="modeSingle">Single</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="mode" id="modeMultiple" value="multiple" checked>
+              <label class="form-check-label small" for="modeMultiple">Multiple</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <label for="genrePts" class="form-label small mb-1">Genre Points:</label>
+            <input id="genrePts" type="number" class="form-control form-control-sm" value="13" min="0">
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <div class="col-12">
+            <label class="form-label small mb-1">Genre Point Behavior:</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="genrePointBehavior" id="genrePointReroll" value="reroll">
+              <label class="form-check-label small" for="genrePointReroll">Reroll</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="genrePointBehavior" id="genrePointPlusOne" value="plusOne">
+              <label class="form-check-label small" for="genrePointPlusOne">+1 to Main</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="genrePointBehavior" id="genrePointRerollPlusOne" value="rerollPlusOne" checked>
+              <label class="form-check-label small" for="genrePointRerollPlusOne">Reroll +1</label>
+            </div>
+          </div>
+        </div>
+        <div class="row g-2 mb-2 multiple-only d-none">
+          <div class="col-6">
+            <label for="simCount" class="form-label small mb-1">Simulations:</label>
+            <input id="simCount" type="number" class="form-control form-control-sm" value="1000" min="1">
+          </div>
+        </div>
+        
+        <h6 class="mb-2">Game Balance</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-4">
+            <label for="maxStrikes" class="form-label small mb-1">Max Strikes:</label>
+            <input id="maxStrikes" type="number" class="form-control form-control-sm" value="3" min="1" max="10">
+          </div>
+          <div class="col-4">
+            <label for="maxRounds" class="form-label small mb-1">Max Rounds:</label>
+            <input id="maxRounds" type="number" class="form-control form-control-sm" value="1000" min="100" max="10000">
+          </div>
+          <div class="col-4">
+            <label for="numPlayers" class="form-label small mb-1">Players:</label>
+            <input id="numPlayers" type="number" class="form-control form-control-sm" value="4" min="1" max="8">
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label small mb-1">Success Condition:</label>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="successCondition" id="successEqualOrHigher" value="equalOrHigher" checked>
+            <label class="form-check-label small" for="successEqualOrHigher">≥</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="successCondition" id="successHigherThan" value="higherThan">
+            <label class="form-check-label small" for="successHigherThan">></label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <h6 class="mb-2">Face Card Modifiers</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-4">
+            <label for="jackModifier" class="form-label small mb-1">Jack:</label>
+            <input id="jackModifier" type="number" class="form-control form-control-sm" value="1" min="0" max="5">
+          </div>
+          <div class="col-4">
+            <label for="queenModifier" class="form-label small mb-1">Queen:</label>
+            <input id="queenModifier" type="number" class="form-control form-control-sm" value="2" min="0" max="5">
+          </div>
+          <div class="col-4">
+            <label for="kingModifier" class="form-label small mb-1">King:</label>
+            <input id="kingModifier" type="number" class="form-control form-control-sm" value="3" min="0" max="5">
+          </div>
+        </div>
+        
+        <h6 class="mb-2">Reserve Distribution</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <label for="successNumberCards" class="form-label small mb-1">Success Cards:</label>
+            <input id="successNumberCards" type="number" class="form-control form-control-sm" value="1" min="0" max="5">
+          </div>
+          <div class="col-6">
+            <label for="failureNumberCards" class="form-label small mb-1">Failure Cards:</label>
+            <input id="failureNumberCards" type="number" class="form-control form-control-sm" value="1" min="0" max="5">
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <label for="lowFalloutFaceCard" class="form-label small mb-1">Low Fallout (1-2):</label>
+            <select id="lowFalloutFaceCard" class="form-select form-select-sm">
+              <option value="J">Jack</option>
+              <option value="Q">Queen</option>
+              <option value="K">King</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label for="highFalloutFaceCard" class="form-label small mb-1">High Fallout (3-4):</label>
+            <select id="highFalloutFaceCard" class="form-select form-select-sm">
+              <option value="Q">Queen</option>
+              <option value="J">Jack</option>
+              <option value="K">King</option>
+            </select>
+          </div>
+        </div>
+        
+        <h6 class="mb-2">Trophy Pile Configuration</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <label class="form-label small mb-1">Initial Card:</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="trophyPileInitial" id="trophyPileTop" value="top">
+              <label class="form-check-label small" for="trophyPileTop">Top of Reserve</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="trophyPileInitial" id="trophyPileBottom" value="bottom" checked>
+              <label class="form-check-label small" for="trophyPileBottom">Bottom of Reserve</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="trophyPileInitial" id="trophyPileNone" value="none">
+              <label class="form-check-label small" for="trophyPileNone">None</label>
+            </div>
+          </div>
+        </div>
+        
+        <h6 class="mb-2">Trophy Pile Shuffling</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="shuffleTrophyOnFail">
+              <label class="form-check-label small" for="shuffleTrophyOnFail">After Each Failure</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="shuffleTrophyOnFaceCard" checked>
+              <label class="form-check-label small" for="shuffleTrophyOnFaceCard">After Each Face Card</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="shuffleTrophyOnJoker" checked>
+              <label class="form-check-label small" for="shuffleTrophyOnJoker">After Each Joker</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3">
+      <div class="col-md-6">
+        <h6 class="mb-2">Threat Deck Configuration</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeAces" checked>
+              <label class="form-check-label small" for="includeAces">Include Aces</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeTwoToFive" checked>
+              <label class="form-check-label small" for="includeTwoToFive">Include 2-5s</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeInitialFaceCard" checked>
+              <label class="form-check-label small" for="includeInitialFaceCard">Initial Face Card</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <label for="initialFaceCardType" class="form-label small mb-1">Face Card Type:</label>
+            <select id="initialFaceCardType" class="form-select form-select-sm">
+              <option value="J">Jack</option>
+              <option value="Q">Queen</option>
+              <option value="K">King</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <h6 class="mb-2">Threat Pool Ranges</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeOnes" checked>
+              <label class="form-check-label small" for="includeOnes">1s (Aces)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeTwos" checked>
+              <label class="form-check-label small" for="includeTwos">2s</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeThrees" checked>
+              <label class="form-check-label small" for="includeThrees">3s</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeFours" checked>
+              <label class="form-check-label small" for="includeFours">4s</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeFives">
+              <label class="form-check-label small" for="includeFives">5s</label>
+            </div>
+            <div class="mt-2">
+              <label for="customThreatPoolSize" class="form-label small mb-1">Pool Size:</label>
+              <input id="customThreatPoolSize" type="number" class="form-control form-control-sm" value="17" min="1" max="40" disabled>
+            </div>
+            <div class="mt-2">
+              <label class="form-label small mb-1">Number Reserve:</label>
+              <span id="numberReserveSize" class="badge bg-info">27</span>
+              <small class="text-muted">cards</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-2">
+      <div class="col-12">
+        <button id="runBtn" class="btn btn-primary btn-sm">Run Simulation</button>
+        <button id="clearBtn" class="btn btn-secondary btn-sm ms-2">Clear</button>
+        <button id="resetDefaultsBtn" class="btn btn-outline-secondary btn-sm ms-2">Reset to Defaults</button>
+        <button id="copyConfigBtn" class="btn btn-outline-info btn-sm ms-2">Copy Config</button>
+        <button id="pasteConfigBtn" class="btn btn-outline-warning btn-sm ms-2">Paste Config</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="log" class="border p-2 mb-3" style="height:200px; overflow-y:auto; white-space: pre-wrap; font-family: monospace; font-size: 0.875rem;"></div>
+  <div id="progress" class="d-none mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Simulation Progress</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="progress mb-3">
+              <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+            </div>
+            <div class="text-muted">
+              <span id="progressText">0 / 0 simulations completed</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-4">
+                <div class="text-center">
+                  <div class="h4 text-success" id="winRate">0%</div>
+                  <div class="text-muted small">Win Rate</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="text-center">
+                  <div class="h4 text-info" id="avgRounds">0.00</div>
+                  <div class="text-muted small">Avg Rounds</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="text-center">
+                  <div class="h4 text-warning" id="avgTests">0.0</div>
+                  <div class="text-muted small">Avg Tests</div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-muted small mb-1">End Reasons:</div>
+              <div id="endReasons" class="small"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="summary" class="d-none"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import { UIController } from './js/uiController.js';
+    
+    // Initialize the application
+    const ui = new UIController();
+  </script>
+</body>
+</html>

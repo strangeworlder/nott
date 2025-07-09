@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Minimal TURN server for testing
+  coturn-test:
+    image: coturn/coturn:4.6.2
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+      - "49152:49152/udp"
+    environment:
+      - TURN_USERNAME=nott_user
+      - TURN_PASSWORD=nott_password
+      - TURN_REALM=nott.local
+    command: >
+      --listening-port=3478
+      --listening-ip=0.0.0.0
+      --realm=nott.local
+      --user=nott_user:nott_password
+      --no-auth
+      --log-file stdout
+      --min-port=49152
+      --max-port=49152
+    networks:
+      - coturn-test-network
+
+networks:
+  coturn-test-network:
+    driver: bridge 

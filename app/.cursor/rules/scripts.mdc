@@ -1,0 +1,19 @@
+---
+description: NPM scripts for formatting, linting and checking
+globs:
+  - "**/package.json"
+alwaysApply: false
+---
+
+# Package.json Scripts
+
+```json
+{
+  "scripts": {
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "check": "biome check --write .",
+    "format:check": "biome format --write . --files-ignore-unknown=false",
+    "lint:check": "biome lint . --files-ignore-unknown=false"
+  }
+}

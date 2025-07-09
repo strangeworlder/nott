@@ -1,0 +1,356 @@
+
+# Frontend Standards
+
+## Design System Architecture
+
+### Atomic Design Structure
+```
+src/components/ui/design-system/
+├── atoms/           # Basic building blocks (Button, Input, etc.)
+├── molecules/       # Simple combinations (FormField, Card, etc.)
+├── organisms/       # Complex components (Header, Footer, etc.)
+├── templates/       # Page layouts and compositions
+├── tokens/          # Design tokens (colors, spacing, typography)
+└── utils/           # Design system utilities
+```
+
+### Design Tokens
+- Use centralized design tokens from `tokens/index.ts`
+- Colors: Horror theme (reds), Night theme (grays), Blood theme (accents)
+- Typography: Horror font (Creepster), Sans (Inter), Mono (JetBrains Mono)
+- Spacing: Consistent scale (0.25rem to 16rem)
+- Animations: Flicker, Float, Glow effects for horror atmosphere
+
+### Component Hierarchy
+1. **Atoms**: BaseButton, BaseInput, BaseIcon, BaseText
+2. **Molecules**: FormField, Card, Modal, Navigation
+3. **Organisms**: Header, Footer, GameBoard, Lobby
+4. **Templates**: Page layouts and compositions
+
+## Tailwind CSS Configuration
+
+### Theme Configuration
+- **Colors**: Horror (reds), Night (grays), Blood (deep reds)
+- **Typography**: Custom font families with proper line heights
+- **Spacing**: Extended scale with additional values (18, 88, 128)
+- **Animations**: Custom keyframes for horror effects
+- **Shadows**: Glow effects and horror-themed shadows
+- **Z-Index**: Comprehensive layering system
+
+### Custom Utilities
+```css
+/* Horror theme utilities */
+.text-glow              /* Red glow text effect */
+.text-glow-soft         /* Soft red glow */
+.border-glow            /* Glowing border */
+.bg-horror-gradient     /* Horror gradient background */
+.bg-blood-gradient      /* Blood gradient background */
+.backdrop-blur-horror   /* Horror backdrop blur */
+.scrollbar-hide         /* Hide scrollbars */
+.scrollbar-thin         /* Custom thin scrollbars */
+```
+
+### Animation Classes
+```css
+/* Built-in animations */
+.animate-fade-in        /* Fade in effect */
+.animate-slide-up       /* Slide up animation */
+.animate-slide-down     /* Slide down animation */
+.animate-scale-in       /* Scale in effect */
+.animate-bounce-gentle  /* Gentle bounce */
+
+/* Horror animations */
+.animate-flicker        /* Flicker effect */
+.animate-float          /* Float animation */
+.animate-glow           /* Glow animation */
+```
+
+### Component Classes
+```css
+/* Button variants */
+.btn-horror             /* Horror theme button */
+.btn-blood              /* Blood theme button */
+.btn-ghost              /* Ghost button */
+
+/* Input variants */
+.input-horror           /* Horror theme input */
+.input-blood            /* Blood theme input */
+
+/* Card variants */
+.card                   /* Default card */
+.card-horror            /* Horror theme card */
+.card-blood             /* Blood theme card */
+
+/* Form components */
+.form-group             /* Form group spacing */
+.form-label             /* Form label styling */
+.form-error             /* Error message styling */
+.form-hint              /* Hint text styling */
+```
+
+## Component Architecture
+
+### Script Setup & Composition API
+- Use `<script setup lang="ts">` for all components
+- Define props with `defineProps<T>()` and interfaces for complex types
+- Define emits with `defineEmits<T>()` and typed event interfaces
+- Use `withDefaults()` for props with default values
+- Import composables at the top, then reactive state, then computed, then methods
+
+### State Management
+- Use `ref()` for primitive values, `reactive()` for objects
+- Prefer `computed()` for derived state over manual calculations
+- Use `watch()` and `watchEffect()` sparingly, prefer computed properties
+- Implement proper cleanup in `onUnmounted()` for subscriptions, timers, and Three.js resources
+
+### Type Safety
+- Define interfaces for all props, emits, and complex data structures
+- Use strict TypeScript with `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters`
+- Avoid `any` type - use proper interfaces or `unknown` with type guards
+- Export types from dedicated type files in `src/types/`
+- Use design token types from `tokens/index.ts` for consistent theming
+
+## Pinia Store Patterns
+
+### Store Structure
+```typescript
+// stores/game.ts
+interface GameState {
+  currentGame: Game | null;
+  players: Player[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+interface GameActions {
+  joinGame(gameId: string): Promise<void>;
+  leaveGame(): Promise<void>;
+  updateGameState(state: Partial<Game>): Promise<void>;
+}
+
+interface GameGetters {
+  isGameActive: boolean;
+  currentPlayer: Player | null;
+  connectedPlayers: Player[];
+}
+```
+
+### Store Implementation
+- Use `defineStore()` with typed state, getters, and actions
+- Actions should return `Promise<void>` for async operations
+- Implement proper error handling with try/catch blocks
+- Use `$reset()` for store cleanup in `onUnmounted()`
+
+## Three.js Integration
+
+### Component Structure
+- Create dedicated Three.js components with proper lifecycle management
+- Use `useThree()` from `@tresjs/core` when available
+- Implement proper cleanup: dispose geometries, materials, and renderer
+- Handle window resize events with debounced handlers
+
+### Performance
+- Use `requestAnimationFrame()` for animations
+- Implement object pooling for frequently created/destroyed objects
+- Use `InstancedMesh` for repeated geometries
+- Implement level-of-detail (LOD) for complex scenes
+
+## Styling & UI
+
+### Tailwind CSS & Design System
+- Use semantic class combinations in `@apply` directives
+- Create reusable component classes for complex patterns
+- Use CSS custom properties for theme values
+- Implement responsive design with mobile-first approach
+- Use design tokens for consistent spacing, colors, and typography
+- Follow horror theme: dark backgrounds, red accents, atmospheric effects
+- Implement proper contrast ratios for accessibility
+
+### Component Styling
+- Use `scoped` styles for component-specific CSS
+- Define CSS custom properties for theme consistency
+- Use `@apply` for complex Tailwind combinations
+- Implement dark mode with CSS custom properties
+
+## Error Handling & Loading States
+
+### Error Boundaries
+- Implement proper error handling in async operations
+- Use `ref()` for loading states: `const isLoading = ref(false)`
+- Display user-friendly error messages
+- Implement retry mechanisms for failed operations
+
+### Loading Patterns
+```typescript
+const loading = ref(false);
+const error = ref<string | null>(null);
+
+const handleAsyncOperation = async () => {
+  loading.value = true;
+  error.value = null;
+  
+  try {
+    await someAsyncOperation();
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Unknown error';
+  } finally {
+    loading.value = false;
+  }
+};
+```
+
+## Form Handling
+
+### Validation
+- Use Zod schemas for form validation
+- Implement real-time validation with `watch()`
+- Display validation errors inline with proper accessibility
+- Use `computed()` for form validity checks
+
+### Form Patterns
+```typescript
+interface FormState {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
+
+const form = reactive<FormState>({
+  email: '',
+  password: '',
+  rememberMe: false,
+});
+
+const isFormValid = computed(() => {
+  return form.email && form.password && isValidEmail(form.email);
+});
+```
+
+## Accessibility
+
+### ARIA & Semantics
+- Use semantic HTML elements (`<button>`, `<nav>`, `<main>`)
+- Implement proper ARIA labels and roles only if the semantic html
+- Ensure keyboard navigation works for all interactive elements
+- Use `aria-live` regions for dynamic content updates
+
+### Focus Management
+- Implement proper focus trapping in modals
+- Use `nextTick()` for focus management after DOM updates
+- Provide visible focus indicators for all interactive elements
+
+## Performance Optimization
+
+### Component Optimization
+- Use `shallowRef()` for large objects that don't need deep reactivity
+- Implement `v-memo` for expensive list rendering
+- Use `defineAsyncComponent()` for code splitting
+- Implement proper `key` attributes for list rendering
+
+### Bundle Optimization
+- Lazy load routes with `import()` syntax
+- Use dynamic imports for heavy components
+- Implement proper tree shaking with ES modules
+- Monitor bundle size with `vite-bundle-analyzer`
+
+## Testing Patterns
+
+### Component Testing
+- Test component props, emits, and user interactions
+- Mock external dependencies (API calls, WebSocket)
+- Test error states and loading states
+- Use `@testing-library/vue` for user-centric testing
+
+### Store Testing
+- Test store actions, getters, and state mutations
+- Mock API calls and external services
+- Test error handling and edge cases
+- Verify proper cleanup in store tests
+
+## File Organization
+
+### Component Structure
+```
+src/
+├── components/
+│   ├── ui/           # Reusable UI components
+│   ├── game/         # Game-specific components
+│   └── layout/       # Layout components
+├── stores/           # Pinia stores
+├── types/            # TypeScript interfaces
+├── utils/            # Utility functions
+├── services/         # API and external services
+└── composables/      # Reusable composables
+```
+
+### Naming Conventions
+- Components: PascalCase (`GameBoard.vue`)
+- Files: kebab-case (`game-board.vue`)
+- Stores: camelCase (`gameStore.ts`)
+- Types: PascalCase with descriptive names (`GameState`, `PlayerData`)
+- Composables: camelCase with `use` prefix (`useGameState.ts`)
+
+## Code Quality
+
+### Linting & Formatting
+- Use Biome for formatting and linting
+- Enforce consistent import ordering
+- Remove unused imports and variables
+- Use meaningful variable and function names
+
+### Documentation
+- Add JSDoc comments for complex functions
+- Document component props and emits
+- Include usage examples for reusable components
+- Maintain README files for complex features
+
+## Horror Theme Guidelines
+
+### Color Usage
+- **Horror (Reds)**: Primary actions, emphasis, important elements
+- **Night (Grays)**: Backgrounds, neutral elements, secondary content
+- **Blood (Deep Reds)**: Danger actions, errors, critical warnings
+
+### Animation Guidelines
+- Use flicker effects sparingly for horror atmosphere
+- Implement glow effects for important elements
+- Use float animations for subtle hover effects
+- Apply pulse effects for loading states
+
+### Typography Guidelines
+- Use Creepster font for horror-themed titles and headings
+- Use Inter for body text and UI elements
+- Use JetBrains Mono for code and technical content
+- Maintain proper contrast ratios for accessibility
+
+## Design System Integration
+
+### Token Usage
+```typescript
+import { colors, typography, spacing } from '@/components/ui/design-system/tokens';
+
+// Use design tokens for consistent theming
+const primaryColor = colors.horror[600];
+const bodyFont = typography.fontFamily.sans;
+const standardSpacing = spacing[4];
+```
+
+### Component Theming
+- Use design tokens for all color, spacing, and typography values
+- Implement consistent hover and focus states
+- Follow horror theme guidelines for visual hierarchy
+- Ensure proper accessibility contrast ratios
+
+# Frontend Standards
+
+- Use `<script setup lang=\"ts\">` + Composition API.
+- Props/emits defined with interfaces and `defineProps`/`defineEmits`.
+- Reactive state (`ref`/`reactive`), computed for derived values.
+- Tailwind CSS styling; scoped `<style>`.
+- Pinia stores: typed state, getters, actions return Promises.
+
+- Use `<script setup lang=\"ts\">` + Composition API.
+- Props/emits defined with interfaces and `defineProps`/`defineEmits`.
+- Reactive state (`ref`/`reactive`), computed for derived values.
+- Tailwind CSS styling; scoped `<style>`.
+- Pinia stores: typed state, getters, actions return Promises.

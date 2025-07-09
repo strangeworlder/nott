@@ -1,0 +1,11 @@
+---
+description: AI assistant prompting guidelines
+alwaysApply: true
+---
+
+# Cursor AI Prompts
+
+1. Specify context: “In NotT (Vue3+TS+Three)…”
+2. Reference patterns/files: “Follow `DiceRoller.vue`…”
+3. Include type & error-handling guidance.
+4. Request unit tests & docs for new logic.

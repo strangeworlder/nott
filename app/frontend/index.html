@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Night of the Thirteenth - Multiplayer Horror Survival Tabletop Game" />
+    <meta name="keywords" content="horror, game, tabletop, multiplayer, survival" />
+    <meta name="author" content="NotT Development Team" />
+    
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    
+    <!-- Horror theme -->
+    <title>Night of the Thirteenth</title>
+    
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#020617" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Night of the Thirteenth" />
+    <meta property="og:description" content="Multiplayer Horror Survival Tabletop Game" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nott-game.com" />
+    <meta property="og:image" content="/og-image.jpg" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Night of the Thirteenth" />
+    <meta name="twitter:description" content="Multiplayer Horror Survival Tabletop Game" />
+    <meta name="twitter:image" content="/og-image.jpg" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+    
+    <!-- Horror loading screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-night-950 flex items-center justify-center z-50">
+      <div class="text-center">
+        <h1 class="horror-text text-6xl text-blood-500 glow-text mb-4">
+          Night of the Thirteenth
+        </h1>
+        <div class="text-night-300 text-lg mb-8">
+          Loading your doom...
+        </div>
+        <div class="flex justify-center space-x-2">
+          <div class="w-3 h-3 bg-blood-500 rounded-full animate-pulse"></div>
+          <div class="w-3 h-3 bg-blood-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+          <div class="w-3 h-3 bg-blood-500 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // Hide loading screen when app is ready
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loadingScreen = document.getElementById('loading-screen')
+          if (loadingScreen) {
+            loadingScreen.style.opacity = '0'
+            setTimeout(() => {
+              loadingScreen.style.display = 'none'
+            }, 500)
+          }
+        }, 1000)
+      })
+    </script>
+  </body>
+</html> 

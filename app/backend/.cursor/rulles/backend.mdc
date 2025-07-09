@@ -1,0 +1,322 @@
+---
+description: Node.js + TS service & API conventions
+globs:
+  - "src/**"
+alwaysApply: false
+---
+
+# Backend Standards
+
+## Project Structure
+
+### Core Directories
+- `src/controllers/` - Express route handlers with typed responses
+- `src/services/` - Business logic classes with typed methods
+- `src/middleware/` - Express middleware (auth, validation, error handling)
+- `src/routes/` - Route definitions organized by feature
+- `src/socket/` - Socket.IO event handlers for real-time features
+- `src/config/` - Environment configuration with type safety
+- `src/db/` - Database connection and query utilities
+- `src/types/` - TypeScript interfaces and type definitions
+- `src/utils/` - Shared utility functions
+
+## Service Layer Pattern
+
+### Service Class Structure
+```typescript
+// services/GameService.ts
+export class GameService {
+  constructor(private db: DatabaseConnection) {}
+
+  async createGame(gameData: CreateGameRequest): Promise<Game> {
+    // Business logic implementation
+  }
+
+  async joinGame(gameId: string, playerId: string): Promise<Game> {
+    // Game joining logic
+  }
+
+  async updateGameState(gameId: string, state: Partial<GameState>): Promise<Game> {
+    // State update logic
+  }
+}
+```
+
+### Service Method Patterns
+- Use typed parameters and return types
+- Implement proper error handling with custom error classes
+- Use dependency injection for database connections
+- Return structured responses: `{ success: boolean, data?: T, error?: string }`
+
+## Controller Response Standards
+
+### Success Response Format
+```typescript
+{
+  success: true,
+  data: T,
+  timestamp: string
+}
+```
+
+### Error Response Format
+```typescript
+{
+  success: false,
+  error: {
+    code: string,
+    message: string,
+    details?: unknown,
+    timestamp: string
+  }
+}
+```
+
+### Controller Implementation
+```typescript
+// controllers/gameController.ts
+export const createGame = async (req: Request, res: Response) => {
+  try {
+    const gameData = req.body;
+    const game = await gameService.createGame(gameData);
+    
+    res.status(201).json({
+      success: true,
+      data: game,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: 'GAME_CREATION_FAILED',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+};
+```
+
+## Middleware Standards
+
+### Authentication Middleware
+```typescript
+// middleware/auth.ts
+export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      error: {
+        code: 'MISSING_TOKEN',
+        message: 'Access token required',
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+  
+  // JWT verification logic
+  next();
+};
+```
+
+### Validation Middleware
+- Use Zod schemas for request validation
+- Implement rate limiting with `express-rate-limit`
+- Use `express-validator` for input sanitization
+
+### Error Handling
+- Centralized error handler in `middleware/errorHandler.ts`
+- Custom error classes with status codes
+- Structured error responses with codes and details
+
+## Socket.IO Event Patterns
+
+### Event Structure
+```typescript
+// socket/handlers.ts
+socket.on('game:join', (gameId: string, player: Player) => {
+  socket.join(gameId);
+  socket.to(gameId).emit('player:joined', player);
+});
+
+socket.on('player:action', (gameId: string, playerId: string, action: GameAction) => {
+  socket.to(gameId).emit('player:action', playerId, action);
+});
+```
+
+### Event Naming Convention
+- Use colon-separated names: `game:join`, `player:action`
+- Group related events: `game:*`, `player:*`, `voice:*`
+- Emit to specific rooms for game isolation
+
+## Database Patterns
+
+### Connection Management
+- Use connection pooling with `pg`
+- Implement graceful error handling for connection failures
+- Support both development and production SSL configurations
+
+### Query Patterns
+```typescript
+// db/queries.ts
+export const createGame = async (gameData: GameData): Promise<Game> => {
+  const query = `
+    INSERT INTO games (id, name, state, created_at)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *
+  `;
+  
+  const result = await query(query, [
+    gameData.id,
+    gameData.name,
+    JSON.stringify(gameData.state),
+    new Date()
+  ]);
+  
+  return result.rows[0];
+};
+```
+
+## Configuration Management
+
+### Environment Configuration
+```typescript
+// config/index.ts
+export const config = {
+  nodeEnv: process.env.NODE_ENV || 'development',
+  port: Number.parseInt(process.env.PORT || '4000', 10),
+  database: {
+    url: process.env.DATABASE_URL || 'postgresql://...',
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'default-secret',
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  },
+  rateLimit: {
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  }
+} as const;
+```
+
+## Security Standards
+
+### Input Validation
+- Validate all user inputs with Zod schemas
+- Sanitize data before database operations
+- Use parameterized queries to prevent SQL injection
+
+### Authentication & Authorization
+- JWT-based authentication with refresh tokens
+- Role-based access control (RBAC)
+- Secure password hashing with bcrypt
+
+### Rate Limiting
+- Implement per-IP rate limiting
+- Separate limits for authentication endpoints
+- Configurable windows and request limits
+
+## Performance Standards
+
+### Response Times
+- API endpoints: < 100ms
+- Database queries: < 50ms
+- Memory usage: < 512MB
+
+### Caching Strategy
+- Redis for session storage and caching
+- Implement cache invalidation patterns
+- Use connection pooling for database
+
+## Testing Patterns
+
+### Unit Testing
+```typescript
+// tests/services/GameService.test.ts
+describe('GameService', () => {
+  beforeEach(() => {
+    // Setup test database
+  });
+
+  it('should create a new game', async () => {
+    const gameData = { name: 'Test Game' };
+    const game = await gameService.createGame(gameData);
+    
+    expect(game).toBeDefined();
+    expect(game.name).toBe('Test Game');
+  });
+});
+```
+
+### Integration Testing
+- Test API endpoints with supertest
+- Mock external dependencies
+- Test both success and error scenarios
+
+## Logging & Monitoring
+
+### Logging Standards
+- Use Winston for structured logging
+- Log all API requests and responses
+- Include request ID for tracing
+- Log errors with stack traces
+
+### Health Checks
+- Implement `/health` endpoint
+- Check database connectivity
+- Monitor memory and CPU usage
+
+## Error Handling
+
+### Custom Error Classes
+```typescript
+export class ValidationError extends Error {
+  constructor(message: string, public details?: unknown) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+export class DatabaseError extends Error {
+  constructor(message: string, public originalError?: Error) {
+    super(message);
+    this.name = 'DatabaseError';
+  }
+}
+```
+
+### Error Response Format
+```typescript
+{
+  success: false,
+  error: {
+    code: 'VALIDATION_ERROR',
+    message: 'Invalid input data',
+    details: { field: 'email', issue: 'Invalid format' },
+    timestamp: '2024-01-01T00:00:00.000Z'
+  }
+}
+```
+
+## API Documentation
+
+### OpenAPI/Swagger
+- Document all endpoints with OpenAPI 3.0
+- Include request/response schemas
+- Provide example requests and responses
+- Document error codes and messages
+
+### Code Documentation
+- JSDoc comments for all public methods
+- Include parameter types and return types
+- Document complex business logic
+- Provide usage examples
+# Backend Standards
+
+- Each service class in `services/` with typed methods.
+- Controllers respond `{ success, data?, error? }`.
+- Middleware: `authenticateToken`, Zod-based validation.
+- Socket.IO: handle `join_game`, `game_action`, broadcast results.

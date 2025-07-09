@@ -1,0 +1,15 @@
+---
+description: Performance, security, and docs standards
+alwaysApply: true
+---
+
+# Performance & Security
+
+- Frontend: <2MB bundle, FCP<1.5s, 60fps desktop.
+- Backend: API<100ms, DB<50ms, mem<512MB.
+- HTTPS, JWT+refresh rotation, Zod validation, rate limiting.
+
+# Documentation
+
+- JSDoc for complex functions.
+- README for each component/service: Usage, Props, Events, Dependencies.

@@ -1,0 +1,24 @@
+---
+description: Enforce general coding conventions, TS, and Biome settings
+alwaysApply: true
+---
+
+# General Coding Standards
+
+- **File Naming**: Align with folder structure (e.g. `components/game/*.vue`, `services/*.ts`, `models/*.ts`, `routes/*.ts`).
+- **TSConfig**: See shared `tsconfig.json` (target ES2020, module ESNext, strict, noImplicitAny, noUnused…).
+- **Biome**: Single tool for formatting, linting, ordering imports. Configured via `biome.json`. Enforce no unused vars, exhaustive deps, no explicit any, no console.log.
+
+# Docker Environment Guidelines
+
+- **Container Context**: All development environments run inside Docker containers. Consider container isolation when suggesting commands or file operations.
+- **Volume Mounts**: Source code is mounted from host to container. File changes persist across container restarts.
+- **Port Mapping**: Services run on mapped ports (e.g., frontend:3000, backend:8000, database:5432).
+- **Command Execution**: Use `docker-compose exec` for running commands inside containers.
+- **Dependencies**: All npm packages, database connections, and services are containerized.
+- **File Paths**: Use container-relative paths when suggesting file operations or debugging.
+- **Environment Variables**: Access via container environment, not host system.
+- **Debugging**: Consider container logs and network isolation when troubleshooting.
+- **File Naming**: Align with folder structure (e.g. `components/game/*.vue`, `services/*.ts`, `models/*.ts`, `routes/*.ts`).
+- **TSConfig**: See shared `tsconfig.json` (target ES2020, module ESNext, strict, noImplicitAny, noUnused…).
+- **Biome**: Single tool for formatting, linting, ordering imports. Configured via `biome.json`. Enforce no unused vars, exhaustive deps, no explicit any, no console.log.

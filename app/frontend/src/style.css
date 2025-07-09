@@ -1,0 +1,289 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Creepster&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-night-950 text-white;
+    font-family: "Inter", system-ui, sans-serif;
+    @apply bg-horror-gradient;
+  }
+
+  /* Typography improvements */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* Focus styles for accessibility */
+  *:focus {
+    @apply outline-none ring-2 ring-horror-500 ring-offset-2 ring-offset-night-950;
+  }
+
+  /* Selection styles */
+  ::selection {
+    @apply bg-horror-600 text-white;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-night-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-night-600 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-night-500;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Horror theme components */
+  .horror-text {
+    font-family: "Creepster", cursive;
+    @apply text-glow-soft;
+  }
+
+  .glow-text {
+    @apply text-glow;
+  }
+
+  .blood-border {
+    @apply border-2 border-blood-500 shadow-glow-soft;
+  }
+
+  /* Animation classes */
+  .flicker {
+    @apply animate-flicker;
+  }
+
+  .pulse-slow {
+    @apply animate-pulse-slow;
+  }
+
+  .float {
+    @apply animate-float;
+  }
+
+  .glow {
+    @apply animate-glow;
+  }
+
+  /* Card components */
+  .card {
+    @apply bg-night-800/80 backdrop-blur-sm border border-night-700 rounded-lg shadow-lg;
+  }
+
+  .card-horror {
+    @apply bg-night-800/90 backdrop-blur-sm border border-horror-600 rounded-lg shadow-glow-soft;
+  }
+
+  .card-blood {
+    @apply bg-blood-900/80 backdrop-blur-sm border border-blood-600 rounded-lg shadow-glow-blood;
+  }
+
+  /* Button components */
+  .btn-horror {
+    @apply bg-horror-600 hover:bg-horror-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:ring-2 focus:ring-horror-500 focus:ring-offset-2 focus:ring-offset-night-950;
+  }
+
+  .btn-blood {
+    @apply bg-blood-600 hover:bg-blood-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:ring-2 focus:ring-blood-500 focus:ring-offset-2 focus:ring-offset-night-950;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent hover:bg-night-700 text-night-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 border border-night-600 hover:border-night-500;
+  }
+
+  /* Input components */
+  .input-horror {
+    @apply bg-night-800 border border-night-600 text-white placeholder-night-400 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-horror-500 focus:border-transparent transition-all duration-200;
+  }
+
+  .input-blood {
+    @apply bg-night-800 border border-blood-600 text-white placeholder-night-400 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blood-500 focus:border-transparent transition-all duration-200;
+  }
+
+  /* Modal components */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+  }
+
+  .modal-content {
+    @apply bg-night-800 border border-night-600 rounded-lg shadow-xl max-w-md mx-auto mt-20 p-6;
+  }
+
+  /* Navigation components */
+  .nav-link {
+    @apply text-night-300 hover:text-white transition-colors duration-200;
+  }
+
+  .nav-link-active {
+    @apply text-white text-glow-soft;
+  }
+
+  /* Loading components */
+  .loading-spinner {
+    @apply animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full;
+  }
+
+  .loading-pulse {
+    @apply animate-pulse bg-night-700 rounded;
+  }
+
+  /* Form components */
+  .form-group {
+    @apply space-y-2;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-night-300;
+  }
+
+  .form-error {
+    @apply text-blood-500 text-sm mt-1;
+  }
+
+  .form-hint {
+    @apply text-night-500 text-sm mt-1;
+  }
+}
+
+/* Utility styles */
+@layer utilities {
+  /* Text utilities */
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Background utilities */
+  .backdrop-blur-horror {
+    @apply backdrop-blur-sm bg-night-900/80;
+  }
+
+  .backdrop-blur-blood {
+    @apply backdrop-blur-sm bg-blood-900/80;
+  }
+
+  /* Border utilities */
+  .border-glow {
+    @apply border border-horror-500 shadow-glow-soft;
+  }
+
+  .border-glow-blood {
+    @apply border border-blood-500 shadow-glow-blood;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    @apply animate-fade-in;
+  }
+
+  .animate-slide-up {
+    @apply animate-slide-up;
+  }
+
+  .animate-slide-down {
+    @apply animate-slide-down;
+  }
+
+  .animate-scale-in {
+    @apply animate-scale-in;
+  }
+
+  .animate-bounce-gentle {
+    @apply animate-bounce-gentle;
+  }
+
+  /* Layout utilities */
+  .container-horror {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-horror {
+    @apply py-12 px-4;
+  }
+
+  /* Interactive utilities */
+  .hover-glow {
+    @apply hover:shadow-glow-soft transition-shadow duration-200;
+  }
+
+  .hover-scale {
+    @apply hover:scale-105 transition-transform duration-200;
+  }
+
+  .hover-lift {
+    @apply hover:-translate-y-1 transition-transform duration-200;
+  }
+
+  /* Scrollbar utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #1e293b;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dark {
+    @apply bg-night-950 text-white;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

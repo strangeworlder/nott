@@ -1,0 +1,132 @@
+---
+description: PostgreSQL database patterns for NotT backend
+globs:
+  - "app/backend/src/db/**/*.ts"
+  - "app/backend/src/models/**/*.ts"
+  - "app/backend/src/services/**/*.ts"
+  - "app/backend/src/types/**/*.ts"
+  - "app/backend/db/**/*.sql"
+alwaysApply: false
+---
+
+# Database
+
+## PostgreSQL with pg Library
+
+### Connection & Query Patterns
+- Use `query()` from `src/db/connection.ts` for all database operations
+- Wrap queries in try/catch with proper error handling
+- Use parameterized queries to prevent SQL injection
+- Return typed results with proper interfaces
+
+### Database Schema
+- **Users**: `id`, `username`, `email`, `password_hash`, `bio`, `avatar_url`, timestamps
+- **Games**: `id`, `name`, `director_id`, `status`, `max_players`, `current_players`, `settings` (JSONB)
+- **Game Players**: `id`, `game_id`, `user_id`, `role`, `character_name`, `character_stats` (JSONB), `is_ready`
+- **Game Sessions**: `id`, `game_id`, `session_data` (JSONB), `started_at`, `ended_at`, `winner_id`
+- **Game Events**: `id`, `game_id`, `player_id`, `event_type`, `event_data` (JSONB), `timestamp`
+- **User Stats**: `id`, `user_id`, `games_played`, `games_won`, `games_directed`, `total_score`, `best_score`, `survival_rate`
+
+### Service Layer Patterns
+```typescript
+// services/userService.ts
+interface UserService {
+  createUser(userData: CreateUserData): Promise<User>;
+  findById(id: string): Promise<User | null>;
+  findByUsername(username: string): Promise<User | null>;
+  updateUser(id: string, updates: Partial<User>): Promise<User>;
+  deleteUser(id: string): Promise<void>;
+}
+
+// services/gameService.ts
+interface GameService {
+  createGame(gameData: CreateGameData): Promise<Game>;
+  findById(id: string): Promise<Game | null>;
+  updateGameState(id: string, state: Partial<Game>): Promise<Game>;
+  addPlayer(gameId: string, userId: string, role: PlayerRole): Promise<GamePlayer>;
+  removePlayer(gameId: string, userId: string): Promise<void>;
+}
+```
+
+### Type Definitions
+```typescript
+// types/database.ts
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  password_hash: string;
+  bio?: string;
+  avatar_url?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface Game {
+  id: string;
+  name: string;
+  director_id: string;
+  status: 'lobby' | 'active' | 'completed' | 'cancelled';
+  max_players: number;
+  current_players: number;
+  settings: Record<string, unknown>;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface GamePlayer {
+  id: string;
+  game_id: string;
+  user_id: string;
+  role: 'director' | 'player';
+  character_name?: string;
+  character_stats: Record<string, unknown>;
+  is_ready: boolean;
+  joined_at: Date;
+}
+```
+
+### Query Patterns
+```typescript
+// Use parameterized queries
+const result = await query(
+  'SELECT * FROM users WHERE id = $1',
+  [userId]
+);
+
+// Handle JSONB data
+const game = await query(
+  'UPDATE games SET settings = $1 WHERE id = $2 RETURNING *',
+  [JSON.stringify(newSettings), gameId]
+);
+
+// Transaction pattern
+const client = await getClient();
+try {
+  await client.query('BEGIN');
+  // ... multiple queries
+  await client.query('COMMIT');
+} catch (error) {
+  await client.query('ROLLBACK');
+  throw error;
+} finally {
+  client.release();
+}
+```
+
+### Error Handling
+- Use `createError()` from `middleware/errorHandler.ts` for database errors
+- Log query errors with context
+- Return appropriate HTTP status codes for database failures
+- Handle connection failures gracefully (app continues without DB)
+
+### Performance
+- Use indexes on frequently queried columns
+- Implement connection pooling (already configured)
+- Use JSONB for flexible game state storage
+- Implement proper cleanup for long-running queries
+
+# Database
+
+- Entities with `@Entity`, relations, JSONB state.
+- Repositories wrap `Repository<T>`, expose `create`, `findById`, `updateGameState`.

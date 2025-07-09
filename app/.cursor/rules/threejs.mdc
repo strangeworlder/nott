@@ -1,0 +1,13 @@
+---
+description: Three.js integration in Vue Three components
+globs:
+  - "app/frontend/src/components/**3D.vue"
+alwaysApply: false
+---
+
+# Three.js
+
+- Use `useThree()` from `@tresjs/core` for `scene`, `camera`, `renderer`.
+- Create meshes with explicit geometry/material.
+- Physics-based dice roll logic returns `{ d10, d4, result }`.
+- Cleanup on `onUnmounted`.

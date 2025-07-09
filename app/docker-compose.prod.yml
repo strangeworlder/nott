@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  # Frontend production build
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3013:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_APP_ENV=production
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-https://your-production-api.example.com}
+      - VITE_SOCKET_URL=${VITE_SOCKET_URL:-https://your-production-api.example.com}
+      - VITE_API_TIMEOUT=${VITE_API_TIMEOUT:-15000}
+      - VITE_SOCKET_TIMEOUT=${VITE_SOCKET_TIMEOUT:-10000}
+      - VITE_ENABLE_DEBUG=${VITE_ENABLE_DEBUG:-false}
+      - VITE_ENABLE_LOGGING=${VITE_ENABLE_LOGGING:-false}
+      - VITE_ENABLE_HOT_RELOAD=${VITE_ENABLE_HOT_RELOAD:-false}
+      - VITE_ENABLE_SOURCE_MAPS=${VITE_ENABLE_SOURCE_MAPS:-false}
+      - VITE_ENABLE_PROFILING=${VITE_ENABLE_PROFILING:-false}
+      - VITE_ENABLE_PERFORMANCE_MONITORING=${VITE_ENABLE_PERFORMANCE_MONITORING:-true}
+      - VITE_ENABLE_DEVTOOLS=${VITE_ENABLE_DEVTOOLS:-false}
+      - VITE_ENABLE_ERROR_OVERLAY=${VITE_ENABLE_ERROR_OVERLAY:-false}
+      - VITE_BUILD_ANALYZE=${VITE_BUILD_ANALYZE:-false}
+      - VITE_BUILD_COMPRESS=${VITE_BUILD_COMPRESS:-true}
+      - VITE_ENABLE_PWA=${VITE_ENABLE_PWA:-true}
+      - VITE_ENABLE_OFFLINE_MODE=${VITE_ENABLE_OFFLINE_MODE:-true}
+      - VITE_ENABLE_ANALYTICS=${VITE_ENABLE_ANALYTICS:-true}
+      - VITE_CDN_URL=${VITE_CDN_URL:-https://your-production-cdn.example.com}
+      - VITE_ASSET_PREFIX=${VITE_ASSET_PREFIX:-/assets/}
+    depends_on:
+      - backend
+    networks:
+      - nott-network
+
+  # Backend production server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "4013:4000"
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-nott_user}:${POSTGRES_PASSWORD:-nott_password}@postgres:5432/${POSTGRES_DB:-nott_prod}
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-prod}
+      - TURN_SERVER_URL=turn:${TURN_USERNAME:-nott_user}:${TURN_PASSWORD:-nott_password}@coturn:3478
+    depends_on:
+      - postgres
+      - redis
+      - coturn
+    networks:
+      - nott-network
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-nott_prod}
+      - POSTGRES_USER=${POSTGRES_USER:-nott_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nott_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - nott-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - nott-network
+
+  # TURN server for WebRTC
+  coturn:
+    image: coturn/coturn:4.6.2
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+      - "49152-49162:49152-49162/udp"
+    environment:
+      - TURN_USERNAME=${TURN_USERNAME:-nott_user}
+      - TURN_PASSWORD=${TURN_PASSWORD:-nott_password}
+      - TURN_REALM=${TURN_REALM:-nott.local}
+    command: >
+      --listening-port=3478
+      --listening-ip=0.0.0.0
+      --realm=${TURN_REALM:-nott.local}
+      --user=${TURN_USERNAME:-nott_user}:${TURN_PASSWORD:-nott_password}
+      --no-auth
+      --log-file stdout
+      --min-port=49152
+      --max-port=49162
+      --syslog
+      --fingerprint
+    networks:
+      - nott-network
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8013:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - nott-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  nott-network:
+    driver: bridge

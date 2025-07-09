@@ -1,0 +1,12 @@
+---
+description: Vitest unit test patterns
+globs:
+  - "tests/**"
+alwaysApply: false
+---
+
+# Testing
+
+- Mirror `services/` under `tests/`.
+- Use `describe`/`it`, `beforeEach` for fresh state.
+- Cover both success and failure paths (e.g. `rollD13`).

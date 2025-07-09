@@ -1,0 +1,14 @@
+---
+description: Biome formatter & linter configuration for NotT
+globs:
+  - "**/biome.json"
+alwaysApply: false
+---
+
+# Biome Configuration
+
+Use the provided `biome.json` schema (v1.5.3):
+
+- **Formatter**: 2-space indent, lineWidth=100, quoteStyle single, semicolons always.
+- **Linter**: recommended + correctness (noUnusedVariables, useExhaustiveDependencies), suspicious (noConsoleLog), style (useConst, block statements), performance (noDelete).
+- **VCS Integration**: uses `.gitignore`, excludes node_modules, dist, coverage, bundles.

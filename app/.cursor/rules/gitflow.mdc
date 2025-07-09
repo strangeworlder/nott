@@ -1,0 +1,9 @@
+---
+description: Git branch & commit conventions
+alwaysApply: true
+---
+
+# Git Workflow
+
+- **Branching**: `feature/<desc>`, `bugfix/<desc>`, `hotfix/<desc>`.
+- **Commit messages**: `feat|fix|docs|test|refactor|style: <subject>`.
