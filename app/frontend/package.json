@@ -12,7 +12,7 @@
     "build:development": "tsc --noEmit && vite build --mode development",
     "build:staging": "tsc --noEmit && vite build --mode staging",
     "build:production": "tsc --noEmit && vite build --mode production",
-    "build:analyze": "tsc --noEmit && vite build --mode production --analyze",
+    "build:analyze": "tsc --noEmit && vite build --mode analyze",
     "preview": "vite preview",
     "preview:build": "npm run build && npm run preview",
     "preview:staging": "npm run build:staging && npm run preview",
@@ -34,6 +34,9 @@
     "clean": "rm -rf dist coverage .vite",
     "clean:all": "npm run clean && rm -rf node_modules package-lock.json",
     "analyze": "npm run build:analyze",
+    "analyze:full": "node scripts/analyze-bundle.js full",
+    "analyze:deps": "node scripts/analyze-bundle.js deps",
+    "analyze:tips": "node scripts/analyze-bundle.js tips",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

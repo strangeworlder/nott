@@ -1,9 +1,9 @@
 import { resolve } from "node:path";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
-// import { VitePWA } from "vite-plugin-pwa";
-// import { visualizer } from "rollup-plugin-visualizer";
-// import { compression } from "vite-plugin-compression";
+import { VitePWA } from "vite-plugin-pwa";
+import { visualizer } from "rollup-plugin-visualizer";
+import compression from "vite-plugin-compression";
 
 export default defineConfig(({ mode }) => {
 	// Load env file based on `mode` in the current working directory.
@@ -12,99 +12,106 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [
 			vue(),
-			// PWA support for offline functionality (commented until dependencies are properly installed)
-			// VitePWA({
-			// 	registerType: "autoUpdate",
-			// 	workbox: {
-			// 		globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-			// 		runtimeCaching: [
-			// 			{
-			// 				urlPattern: /^https:\/\/api\.nott\.game\/.*/i,
-			// 				handler: "NetworkFirst",
-			// 				options: {
-			// 					cacheName: "api-cache",
-			// 					expiration: {
-			// 						maxEntries: 100,
-			// 						maxAgeSeconds: 60 * 60 * 24, // 24 hours
-			// 					},
-			// 				},
-			// 			},
-			// 			{
-			// 				urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
-			// 				handler: "CacheFirst",
-			// 				options: {
-			// 					cacheName: "images-cache",
-			// 					expiration: {
-			// 						maxEntries: 1000,
-			// 						maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-			// 					},
-			// 				},
-			// 			},
-			// 		],
-			// 	},
-			// 	manifest: {
-			// 		name: "NotT - Horror Tabletop Game",
-			// 		short_name: "NotT",
-			// 		description: "A horror-themed tabletop game experience",
-			// 		theme_color: "#dc2626",
-			// 		background_color: "#020617",
-			// 		display: "standalone",
-			// 		orientation: "landscape",
-			// 		scope: "/",
-			// 		start_url: "/",
-			// 		icons: [
-			// 			{
-			// 				src: "/icons/icon-72x72.png",
-			// 				sizes: "72x72",
-			// 				type: "image/png",
-			// 			},
-			// 			{
-			// 				src: "/icons/icon-96x96.png",
-			// 				sizes: "96x96",
-			// 				type: "image/png",
-			// 			},
-			// 			{
-			// 				src: "/icons/icon-128x128.png",
-			// 				sizes: "128x128",
-			// 				type: "image/png",
-			// 			},
-			// 			{
-			// 				src: "/icons/icon-144x144.png",
-			// 				sizes: "144x144",
-			// 				type: "image/png",
-			// 			},
-			// 			{
-			// 				src: "/icons/icon-152x152.png",
-			// 				sizes: "152x152",
-			// 				type: "image/png",
-			// 			},
-			// 			{
-			// 				src: "/icons/icon-192x192.png",
-			// 				sizes: "192x192",
-			// 				type: "image/png",
-			// 			},
-			// 			{
-			// 				src: "/icons/icon-384x384.png",
-			// 				sizes: "384x384",
-			// 				type: "image/png",
-			// 			},
-			// 			{
-			// 				src: "/icons/icon-512x512.png",
-			// 				sizes: "512x512",
-			// 				type: "image/png",
-			// 			},
-			// 		],
-			// 	},
-			// }),
+			// PWA support for offline functionality
+			VitePWA({
+				registerType: "autoUpdate",
+				workbox: {
+					globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+					runtimeCaching: [
+						{
+							urlPattern: /^https:\/\/api\.nott\.game\/.*/i,
+							handler: "NetworkFirst",
+							options: {
+								cacheName: "api-cache",
+								expiration: {
+									maxEntries: 100,
+									maxAgeSeconds: 60 * 60 * 24, // 24 hours
+								},
+							},
+						},
+						{
+							urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+							handler: "CacheFirst",
+							options: {
+								cacheName: "images-cache",
+								expiration: {
+									maxEntries: 1000,
+									maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+								},
+							},
+						},
+					],
+				},
+				manifest: {
+					name: "NotT - Horror Tabletop Game",
+					short_name: "NotT",
+					description: "A horror-themed tabletop game experience",
+					theme_color: "#dc2626",
+					background_color: "#020617",
+					display: "standalone",
+					orientation: "landscape",
+					scope: "/",
+					start_url: "/",
+					icons: [
+						{
+							src: "/icons/icon-72x72.png",
+							sizes: "72x72",
+							type: "image/png",
+						},
+						{
+							src: "/icons/icon-96x96.png",
+							sizes: "96x96",
+							type: "image/png",
+						},
+						{
+							src: "/icons/icon-128x128.png",
+							sizes: "128x128",
+							type: "image/png",
+						},
+						{
+							src: "/icons/icon-144x144.png",
+							sizes: "144x144",
+							type: "image/png",
+						},
+						{
+							src: "/icons/icon-152x152.png",
+							sizes: "152x152",
+							type: "image/png",
+						},
+						{
+							src: "/icons/icon-192x192.png",
+							sizes: "192x192",
+							type: "image/png",
+						},
+						{
+							src: "/icons/icon-384x384.png",
+							sizes: "384x384",
+							type: "image/png",
+						},
+						{
+							src: "/icons/icon-512x512.png",
+							sizes: "512x512",
+							type: "image/png",
+						},
+					],
+				},
+			}),
 			// Bundle compression for better performance
-			// compression({
-			// 	algorithm: "gzip",
-			// 	ext: ".gz",
-			// }),
-			// compression({
-			// 	algorithm: "brotliCompress",
-			// 	ext: ".br",
-			// }),
+			compression({
+				algorithm: "gzip",
+				ext: ".gz",
+			}),
+			compression({
+				algorithm: "brotliCompress",
+				ext: ".br",
+			}),
+			// Bundle analysis in analyze mode
+			...(mode === "analyze" ? [visualizer({
+				filename: "dist/stats.html",
+				open: true,
+				gzipSize: true,
+				brotliSize: true,
+			})] : []),
 		],
 		resolve: {
 			alias: {
@@ -184,17 +191,6 @@ export default defineConfig(({ mode }) => {
 						return `assets/[name]-[hash].${ext}`;
 					},
 				},
-				// Bundle analysis in production (commented until dependencies are properly installed)
-				// ...(mode === "analyze" && {
-				// 	plugins: [
-				// 		visualizer({
-				// 			filename: "dist/stats.html",
-				// 			open: true,
-				// 			gzipSize: true,
-				// 			brotliSize: true,
-				// 		}),
-				// 	],
-				// }),
 			},
 			// Optimize build performance
 			chunkSizeWarningLimit: 1000,
@@ -248,7 +244,7 @@ export default defineConfig(({ mode }) => {
 		define: {
 			__VUE_OPTIONS_API__: true,
 			__VUE_PROD_DEVTOOLS__: mode === "development",
-			__APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+			__APP_VERSION__: JSON.stringify(process.env['npm_package_version']),
 			__BUILD_TIME__: JSON.stringify(new Date().toISOString()),
 		},
 		// Environment-specific configurations

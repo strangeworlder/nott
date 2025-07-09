@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { createServer } from "node:http";
+import jwt from "jsonwebtoken";
 import { Server as IOServer } from "socket.io";
 import { io as ClientIO, type Socket as ClientSocket } from "socket.io-client";
-import jwt from "jsonwebtoken";
-import { setupSocketHandlers } from "../handlers";
-import { roomService } from "../../services/roomService";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { config } from "../../config";
+import { roomService } from "../../services/roomService";
+import { setupSocketHandlers } from "../handlers";
 
 // Type definitions for socket events
 interface PlayerLeftPayload {

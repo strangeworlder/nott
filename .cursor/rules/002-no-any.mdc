@@ -1,0 +1,162 @@
+---
+description: Guidelines for avoiding the `any` type in TypeScript code
+globs: ["**/*.{ts,tsx,vue}"]
+related_docs: []
+---
+
+# No `any` Type Allowed
+
+@context {
+    "type": "coding_standards",
+    "purpose": "type_safety",
+    "version": "1.0.0",
+    "scope": "typescript_codebase"
+}
+
+## Overview
+
+@rules [
+    {
+        "id": "no_any_type",
+        "severity": "error",
+        "description": "Do not use the `any` type anywhere in the codebase, including tests, utilities, and prototypes"
+    },
+    {
+        "id": "use_explicit_types",
+        "severity": "error", 
+        "description": "Use explicit, precise types or generics instead of `any`"
+    },
+    {
+        "id": "use_unknown_for_unknown",
+        "severity": "error",
+        "description": "If a type is truly unknown, use `unknown` or a more specific type"
+    },
+    {
+        "id": "test_utilities_generics",
+        "severity": "warning",
+        "description": "For test utilities, prefer `ComponentMountingOptions<Record<string, unknown>>` or similar, or use a generic with a default"
+    }
+]
+
+## Rationale
+
+Using `any` disables type safety and undermines the benefits of TypeScript. All code must be type-safe and pass strict type checks.
+
+## Implementation Guidelines
+
+@implementation {
+    "language": "typescript",
+    "types": {
+        "unknown": "Type-safe alternative to `any` for truly unknown values",
+        "generics": "Use generics with constraints for flexible but type-safe code",
+        "ComponentMountingOptions": "Vue test utility type for component mounting"
+    },
+    "validation": {
+        "strict_types": "All code must pass strict TypeScript checks",
+        "no_implicit_any": "No implicit `any` types allowed",
+        "explicit_typing": "All functions and variables must have explicit types"
+    }
+}
+
+## Examples
+
+### Bad Practices
+
+```typescript
+// BAD: Using `any` type
+function processData(data: any): any {
+    return data.someProperty;
+}
+
+// BAD: Implicit `any` in function parameters
+function handleEvent(event) {
+    console.log(event.target);
+}
+
+// BAD: `any` in test utilities
+const wrapper = mount(Component, {
+    props: any
+});
+```
+
+### Good Practices
+
+```typescript
+// GOOD: Using generics with constraints
+function processData<T extends Record<string, unknown>>(data: T): T {
+    return data;
+}
+
+// GOOD: Explicit typing for unknown values
+function handleEvent(event: Event): void {
+    console.log((event.target as HTMLElement).value);
+}
+
+// GOOD: Type-safe test utilities
+const wrapper = mount(Component, {
+    props: {
+        message: 'Hello'
+    } as ComponentProps
+});
+
+// GOOD: Using `unknown` for truly unknown types
+function processUnknownData(data: unknown): string {
+    if (typeof data === 'string') {
+        return data.toUpperCase();
+    }
+    return String(data);
+}
+```
+
+## Common Patterns
+
+@patterns {
+    "generic_functions": {
+        "pattern": "function<T = unknown>(param: T): T",
+        "use_case": "When you need flexibility but want type safety"
+    },
+    "unknown_handling": {
+        "pattern": "if (typeof value === 'specific_type') { ... }",
+        "use_case": "When dealing with truly unknown values"
+    },
+    "test_utilities": {
+        "pattern": "ComponentMountingOptions<Record<string, unknown>>",
+        "use_case": "For Vue component testing with flexible props"
+    }
+}
+
+## Type Definitions
+
+@types {
+    "SafeAny": "Generic type for flexible but type-safe operations",
+    "UnknownHandler": "Type for functions that handle unknown values",
+    "TestProps": "Type for component test properties"
+}
+
+```typescript
+// Type definitions for common patterns
+type SafeAny<T = unknown> = T;
+type UnknownHandler<T> = (value: unknown) => T;
+type TestProps<T = Record<string, unknown>> = T;
+```
+
+## Validation Rules
+
+@validation {
+    "strict_mode": "TypeScript strict mode must be enabled",
+    "no_implicit_any": "No implicit `any` types in function parameters",
+    "explicit_returns": "All functions must have explicit return types",
+    "generic_constraints": "Use generic constraints instead of `any`"
+}
+
+## Related Documentation
+
+- TypeScript strict mode configuration
+- Vue 3 component testing patterns
+- Generic type constraints in TypeScript
+
+@version "1.0.0"
+@last_updated "2024-12-19"
+
+function foo<T = unknown>(bar: T): T { ... }
+```

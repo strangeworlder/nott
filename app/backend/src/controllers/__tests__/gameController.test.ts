@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { Request, Response, NextFunction } from "express";
-import { gameController } from "../gameController";
+import { User } from "@/types/database";
+import type { NextFunction, Request, Response } from "express";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { roomService } from "../../services/roomService";
 import type { RoomState, RoomStats } from "../../services/roomService";
-import { User } from "@/types/database";
+import { gameController } from "../gameController";
 
 // Mock the roomService
 vi.mock("../../services/roomService", () => ({

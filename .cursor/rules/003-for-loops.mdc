@@ -1,0 +1,241 @@
+---
+description: Guidelines for using for-loops instead of forEach to avoid linter errors
+globs: ["**/*.{ts,tsx,vue,js,jsx}"]
+related_docs: []
+---
+
+# Use For-Loops Instead of ForEach
+
+@context {
+    "type": "coding_standards",
+    "purpose": "performance_and_linting",
+    "version": "1.0.0",
+    "scope": "javascript_typescript_codebase"
+}
+
+## Overview
+
+@rules [
+    {
+        "id": "prefer_for_loops",
+        "severity": "error",
+        "description": "Always use for-loops instead of forEach to avoid linter errors and improve performance"
+    },
+    {
+        "id": "no_forEach_method",
+        "severity": "error",
+        "description": "Do not use the forEach method on arrays"
+    },
+    {
+        "id": "use_for_of",
+        "severity": "warning",
+        "description": "Prefer for...of loops for iterating over arrays when you need the values"
+    },
+    {
+        "id": "use_for_in",
+        "severity": "warning", 
+        "description": "Use for...in loops only for object properties, not arrays"
+    }
+]
+
+## Rationale
+
+Using for-loops instead of forEach provides better performance, avoids linter errors, and gives more control over the iteration process. ForEach can cause issues with async operations and doesn't allow for early termination.
+
+## Implementation Guidelines
+
+@implementation {
+    "language": "typescript",
+    "patterns": {
+        "for_of": "for (const item of array) - for array values",
+        "for_in": "for (const key in object) - for object properties", 
+        "traditional_for": "for (let i = 0; i < array.length; i++) - for index access"
+    },
+    "validation": {
+        "no_forEach": "No forEach method calls allowed",
+        "proper_loop_type": "Use appropriate loop type for the use case",
+        "performance": "For-loops are more performant than forEach"
+    }
+}
+
+## Examples
+
+### Bad Practices
+
+```typescript
+// BAD: Using forEach
+array.forEach((item, index) => {
+    console.log(item);
+});
+
+// BAD: forEach with async operations
+array.forEach(async (item) => {
+    await processItem(item);
+});
+
+// BAD: forEach on object (wrong method)
+Object.keys(obj).forEach(key => {
+    console.log(obj[key]);
+});
+```
+
+### Good Practices
+
+```typescript
+// GOOD: for...of for array values
+for (const item of array) {
+    console.log(item);
+}
+
+// GOOD: Traditional for loop with index
+for (let i = 0; i < array.length; i++) {
+    console.log(array[i], i);
+}
+
+// GOOD: for...of with async operations
+for (const item of array) {
+    await processItem(item);
+}
+
+// GOOD: for...in for object properties
+for (const key in object) {
+    if (object.hasOwnProperty(key)) {
+        console.log(key, object[key]);
+    }
+}
+
+// GOOD: for...of with early termination
+for (const item of array) {
+    if (item === target) {
+        break; // Can't do this with forEach
+    }
+    processItem(item);
+}
+```
+
+## Common Patterns
+
+@patterns {
+    "array_iteration": {
+        "pattern": "for (const item of array) { ... }",
+        "use_case": "When you need array values",
+        "performance": "Best performance for simple iteration"
+    },
+    "indexed_iteration": {
+        "pattern": "for (let i = 0; i < array.length; i++) { ... }",
+        "use_case": "When you need both value and index",
+        "performance": "Good for indexed operations"
+    },
+    "object_iteration": {
+        "pattern": "for (const key in object) { if (object.hasOwnProperty(key)) { ... } }",
+        "use_case": "When iterating over object properties",
+        "safety": "Always check hasOwnProperty for safety"
+    },
+    "async_iteration": {
+        "pattern": "for (const item of array) { await processItem(item); }",
+        "use_case": "When processing items asynchronously",
+        "benefit": "Proper async handling, unlike forEach"
+    }
+}
+
+## Performance Considerations
+
+@performance {
+    "forEach_vs_for": "For-loops are generally faster than forEach",
+    "memory_usage": "For-loops use less memory overhead",
+    "async_handling": "For-loops handle async operations correctly",
+    "early_termination": "For-loops allow break/continue statements"
+}
+
+## Type Definitions
+
+@types {
+    "ArrayLike": "Type for array-like objects",
+    "Iterable": "Type for iterable objects",
+    "AsyncProcessor": "Type for async processing functions"
+}
+
+```typescript
+// Type definitions for common patterns
+type ArrayLike<T> = Array<T> | ReadonlyArray<T>;
+type Iterable<T> = Iterable<T>;
+type AsyncProcessor<T> = (item: T) => Promise<void>;
+
+// Example typed loop functions
+function processArray<T>(array: ArrayLike<T>, processor: (item: T) => void): void {
+    for (const item of array) {
+        processor(item);
+    }
+}
+
+async function processArrayAsync<T>(
+    array: ArrayLike<T>, 
+    processor: AsyncProcessor<T>
+): Promise<void> {
+    for (const item of array) {
+        await processor(item);
+    }
+}
+```
+
+## Validation Rules
+
+@validation {
+    "no_forEach_calls": "No forEach method calls in code",
+    "proper_loop_selection": "Use appropriate loop type for the use case",
+    "async_safety": "Use for...of for async operations",
+    "object_safety": "Use hasOwnProperty check in for...in loops"
+}
+
+## Migration Guide
+
+@migration {
+    "forEach_to_for_of": "Replace forEach with for...of for simple iteration",
+    "forEach_with_index": "Replace forEach with traditional for loop when index is needed",
+    "forEach_async": "Replace forEach with for...of for async operations",
+    "object_forEach": "Replace Object.keys().forEach with for...in"
+}
+
+### Migration Examples
+
+```typescript
+// Before: forEach
+array.forEach(item => processItem(item));
+
+// After: for...of
+for (const item of array) {
+    processItem(item);
+}
+
+// Before: forEach with index
+array.forEach((item, index) => processItem(item, index));
+
+// After: Traditional for loop
+for (let i = 0; i < array.length; i++) {
+    processItem(array[i], i);
+}
+
+// Before: Object forEach
+Object.keys(obj).forEach(key => console.log(obj[key]));
+
+// After: for...in
+for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+        console.log(obj[key]);
+    }
+}
+```
+
+## Related Documentation
+
+- JavaScript iteration methods
+- TypeScript loop patterns
+- Performance optimization guidelines
+- Async/await best practices
+
+@version "1.0.0"
+@last_updated "2024-12-19"
+description:
+globs:
+alwaysApply: false
+---

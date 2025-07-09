@@ -8,7 +8,7 @@
     <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
       <!-- Title -->
       <div class="text-center mb-12">
-        <h1 class="horror-text text-8xl text-blood-500 glow-text mb-4">
+        <h1 class="horror-text text-8xl text-blood-500 text-glow-soft mb-4">
           Night of the Thirteenth
         </h1>
         <p class="text-night-300 text-xl max-w-2xl mx-auto">

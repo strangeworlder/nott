@@ -14,11 +14,14 @@ import {
 	handleUnhandledRejection,
 	notFoundHandler,
 } from "./middleware/errorHandler";
+import {
+	memoryUsageMiddleware,
+	performanceMiddleware,
+} from "./middleware/performance";
 import { rateLimiter } from "./middleware/rateLimiter";
 import routes from "./routes";
+import monitoringRoutes from "./routes/monitoring";
 import { setupSocketHandlers } from "./socket/handlers";
-import { performanceMiddleware, memoryUsageMiddleware } from './middleware/performance';
-import monitoringRoutes from './routes/monitoring';
 
 // Load environment variables
 dotenv.config();
@@ -52,7 +55,7 @@ app.use(performanceMiddleware);
 app.use(memoryUsageMiddleware);
 
 // Add monitoring routes
-app.use('/api/monitoring', monitoringRoutes);
+app.use("/api/monitoring", monitoringRoutes);
 
 // Routes
 app.use("/api", routes);

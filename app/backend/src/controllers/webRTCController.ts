@@ -1,6 +1,6 @@
-import type { Request, Response, NextFunction } from "express";
-import { webRTCService } from "../services/webRTCService";
+import type { NextFunction, Request, Response } from "express";
 import { createError } from "../middleware/errorHandler";
+import { webRTCService } from "../services/webRTCService";
 
 // Extend Request interface to include user property
 interface AuthenticatedRequest extends Request {
