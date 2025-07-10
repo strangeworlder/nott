@@ -43,6 +43,9 @@ export const environment: EnvironmentConfig = {
   // CDN Configuration
   CDN_URL: env.VITE_CDN_URL,
   ASSET_PREFIX: env.VITE_ASSET_PREFIX,
+
+  // Sentry
+  SENTRY_DSN: env.VITE_SENTRY_DSN || null,
 };
 
 // Environment validation

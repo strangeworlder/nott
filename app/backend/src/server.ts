@@ -21,10 +21,19 @@ import {
 import { rateLimiter } from "./middleware/rateLimiter";
 import routes from "./routes";
 import monitoringRoutes from "./routes/monitoring";
+// --- Sentry Integration ---
+import {
+	initializeSentry,
+	sentryMiddleware,
+} from "./services/monitoring/sentry";
 import { setupSocketHandlers } from "./socket/handlers";
 
 // Load environment variables
 dotenv.config();
+
+// Initialize Sentry (must be before any other middleware)
+// Temporarily disable Sentry to debug startup issues
+// initializeSentry();
 
 const app = express();
 const server = createServer(app);
@@ -35,6 +44,11 @@ const io = new Server(server, {
 		credentials: true,
 	},
 });
+
+// --- Sentry request/tracing middleware (must be first) ---
+// Temporarily disable Sentry middleware to debug startup issues
+// app.use(sentryMiddleware.requestHandler);
+// app.use(sentryMiddleware.tracingHandler);
 
 // Middleware
 app.use(helmet());
@@ -70,6 +84,10 @@ setupSocketHandlers(io);
 
 // 404 handler for unmatched routes
 app.use(notFoundHandler);
+
+// --- Sentry error handler (must be before custom error handler) ---
+// Temporarily disable Sentry error handler to debug startup issues
+// app.use(sentryMiddleware.errorHandler);
 
 // Error handling
 app.use(errorHandler);

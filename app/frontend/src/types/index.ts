@@ -338,6 +338,7 @@ export interface EnvironmentConfig {
   ENABLE_OFFLINE_MODE: boolean;
   CDN_URL?: string;
   ASSET_PREFIX?: string;
+  SENTRY_DSN?: string | null;
 }
 
 // ============================================================================

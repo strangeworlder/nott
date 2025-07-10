@@ -16,6 +16,7 @@
 		"check": "biome check --write ."
 	},
 	"dependencies": {
+		"@sentry/node": "^9.36.0",
 		"bcryptjs": "^2.4.3",
 		"compression": "^1.7.4",
 		"cors": "^2.8.5",
@@ -37,9 +38,9 @@
 		"socket.io": "^4.7.4",
 		"socket.io-redis": "^6.1.1",
 		"uuid": "^9.0.1",
+		"web-vitals": "^3.5.0",
 		"winston": "^3.11.0",
-		"zod": "^3.25.76",
-		"web-vitals": "^3.5.0"
+		"zod": "^3.25.76"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.5.3",
@@ -62,7 +63,7 @@
 		"ts-node": "^10.9.2",
 		"tsx": "^4.6.2",
 		"typescript": "^5.3.3",
-		"vitest": "^1.0.4",
-		"vite-plugin-inspect": "^0.8.1"
+		"vite-plugin-inspect": "^0.8.1",
+		"vitest": "^1.0.4"
 	}
 }

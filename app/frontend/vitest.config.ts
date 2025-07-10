@@ -6,11 +6,12 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: ['./src/tests/setup.ts'],
     include: [
       'src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
       'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      'frontend/tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
     ],
     exclude: [
       'node_modules',
@@ -64,5 +65,8 @@ export default defineConfig({
       '@/config': resolve(__dirname, 'src/config'),
       '@/tests': resolve(__dirname, 'src/tests'),
     },
+  },
+  define: {
+    'process.env.NODE_ENV': '"test"',
   },
 }); 

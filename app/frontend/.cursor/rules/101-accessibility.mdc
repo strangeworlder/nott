@@ -1,0 +1,374 @@
+---
+description: Accessibility testing requirements for all frontend components
+globs: ["src/components/**/*.vue", "tests/components/**/*.spec.ts", "tests/components/**/*.a11y.spec.ts"]
+related_docs: ["ACCESSIBILITY_TESTING.md", "src/tests/utils/accessibility.ts"]
+---
+
+# Frontend Component Accessibility Testing
+
+@context {
+    "type": "testing_requirements",
+    "scope": "frontend_components",
+    "framework": "vue3_typescript",
+    "testing_library": "axe-core",
+    "version": "1.0.0"
+}
+
+## Overview
+
+All frontend components in NotT must have comprehensive accessibility testing. This ensures our horror-themed tabletop game is accessible to all players, including those using assistive technologies.
+
+## Accessibility Testing Requirements
+
+@rules [
+    {
+        "id": "accessibility_test_required",
+        "severity": "error",
+        "description": "Every Vue component must have corresponding accessibility tests"
+    },
+    {
+        "id": "a11y_test_file_naming",
+        "severity": "error", 
+        "description": "Accessibility test files must use .a11y.spec.ts suffix"
+    },
+    {
+        "id": "wcag_compliance",
+        "severity": "error",
+        "description": "All components must pass WCAG 2.1 AA compliance tests"
+    },
+    {
+        "id": "keyboard_navigation",
+        "severity": "error",
+        "description": "All interactive components must be keyboard navigable"
+    },
+    {
+        "id": "color_contrast",
+        "severity": "error",
+        "description": "All text must meet minimum color contrast requirements"
+    },
+    {
+        "id": "screen_reader_compatibility",
+        "severity": "warning",
+        "description": "Components should be compatible with screen readers"
+    }
+]
+
+## Implementation Guidelines
+
+### 1. Test File Structure
+
+@structure {
+    "naming": "ComponentName.a11y.spec.ts",
+    "location": "tests/components/ui/design-system/[atoms|molecules|organisms]/",
+    "imports": [
+        "Component under test",
+        "a11yHelpers from @/tests/utils/accessibility",
+        "mountComponent from @/tests/utils/test-utils"
+    ]
+}
+
+### 2. Required Test Cases
+
+@test_cases [
+    {
+        "id": "basic_accessibility",
+        "description": "Component passes basic accessibility tests",
+        "method": "a11yHelpers.testComponent(wrapper)"
+    },
+    {
+        "id": "wcag_compliance",
+        "description": "Component meets WCAG 2.1 AA standards",
+        "method": "a11yHelpers.testComponentWCAG(wrapper)"
+    },
+    {
+        "id": "keyboard_navigation",
+        "description": "Component supports keyboard navigation",
+        "method": "a11yHelpers.testComponentKeyboard(wrapper)"
+    },
+    {
+        "id": "color_contrast",
+        "description": "Text meets color contrast requirements",
+        "method": "a11yHelpers.testComponentContrast(wrapper)"
+    },
+    {
+        "id": "screen_reader",
+        "description": "Component works with screen readers",
+        "method": "a11yHelpers.testComponentScreenReader(wrapper)"
+    }
+]
+
+### 3. Component-Specific Tests
+
+@component_tests {
+    "form_components": {
+        "required": [
+            "testComponentForm(wrapper)",
+            "Proper label associations",
+            "ARIA attributes validation"
+        ]
+    },
+    "interactive_components": {
+        "required": [
+            "testComponentKeyboard(wrapper)",
+            "Focus management",
+            "Keyboard event handling"
+        ]
+    },
+    "layout_components": {
+        "required": [
+            "testComponentHeadings(wrapper)",
+            "Semantic structure",
+            "Landmark roles"
+        ]
+    }
+}
+
+## Example Implementation
+
+### Basic Accessibility Test Template
+
+@example {
+    "type": "test_implementation",
+    "component": "BaseButton",
+    "framework": "vue3_vitest"
+}
+
+```typescript
+import BaseButton from '@/components/ui/design-system/atoms/BaseButton.vue';
+import { a11yHelpers } from '@/tests/utils/accessibility';
+import { mountComponent } from '@/tests/utils/test-utils';
+import { describe, expect, it } from 'vitest';
+
+describe('BaseButton Accessibility', () => {
+  it('should be accessible with default props', async () => {
+    const wrapper = mountComponent(BaseButton, {
+      props: {
+        variant: 'horror',
+      },
+      slots: {
+        default: 'Click me',
+      },
+    });
+
+    await a11yHelpers.testComponent(wrapper);
+  });
+
+  it('should pass WCAG 2.1 AA compliance', async () => {
+    const wrapper = mountComponent(BaseButton, {
+      props: {
+        variant: 'blood',
+      },
+      slots: {
+        default: 'Submit',
+      },
+    });
+
+    await a11yHelpers.testComponentWCAG(wrapper);
+  });
+
+  it('should be keyboard navigable', async () => {
+    const wrapper = mountComponent(BaseButton, {
+      props: {
+        variant: 'ghost',
+      },
+      slots: {
+        default: 'Delete',
+      },
+    });
+
+    await a11yHelpers.testComponentKeyboard(wrapper);
+  });
+
+  it('should have proper color contrast', async () => {
+    const wrapper = mountComponent(BaseButton, {
+      props: {
+        variant: 'horror',
+      },
+      slots: {
+        default: 'Accessible Button',
+      },
+    });
+
+    await a11yHelpers.testComponentContrast(wrapper);
+  });
+});
+```
+
+### Advanced Test Cases
+
+@advanced_tests {
+    "variants": "Test all component variants for accessibility",
+    "states": "Test disabled, loading, and error states",
+    "props": "Test accessibility with different prop combinations",
+    "slots": "Test accessibility with different slot content"
+}
+
+```typescript
+// Test component variants
+it('should be accessible in different variants', async () => {
+  const variants = ['horror', 'blood', 'ghost'] as const;
+
+  for (const variant of variants) {
+    const wrapper = mountComponent(BaseButton, {
+      props: { variant },
+      slots: { default: `${variant} button` },
+    });
+
+    await a11yHelpers.testComponent(wrapper);
+  }
+});
+
+// Test component states
+it('should be accessible when disabled', async () => {
+  const wrapper = mountComponent(BaseButton, {
+    props: {
+      variant: 'horror',
+      disabled: true,
+    },
+    slots: {
+      default: 'Disabled Button',
+    },
+  });
+
+  await a11yHelpers.testComponent(wrapper);
+});
+```
+
+## Accessibility Testing Utilities
+
+@utilities {
+    "location": "src/tests/utils/accessibility.ts",
+    "framework": "axe-core",
+    "helpers": [
+        "testComponent(wrapper, options?)",
+        "testComponentWCAG(wrapper)",
+        "testComponentKeyboard(wrapper)",
+        "testComponentContrast(wrapper)",
+        "testComponentScreenReader(wrapper)",
+        "testComponentForm(wrapper)",
+        "testComponentHeadings(wrapper)"
+    ]
+}
+
+### Available Test Methods
+
+@test_methods {
+    "testComponent": {
+        "description": "Basic accessibility testing with custom options",
+        "parameters": ["wrapper", "options?: AccessibilityTestOptions"],
+        "usage": "await a11yHelpers.testComponent(wrapper, { impact: 'serious' })"
+    },
+    "testComponentWCAG": {
+        "description": "WCAG 2.1 AA compliance testing",
+        "parameters": ["wrapper"],
+        "usage": "await a11yHelpers.testComponentWCAG(wrapper)"
+    },
+    "testComponentKeyboard": {
+        "description": "Keyboard navigation testing",
+        "parameters": ["wrapper"],
+        "usage": "await a11yHelpers.testComponentKeyboard(wrapper)"
+    },
+    "testComponentContrast": {
+        "description": "Color contrast testing",
+        "parameters": ["wrapper"],
+        "usage": "await a11yHelpers.testComponentContrast(wrapper)"
+    }
+}
+
+## Common Accessibility Issues
+
+@common_issues [
+    {
+        "id": "missing_aria_labels",
+        "issue": "Interactive elements without proper ARIA labels",
+        "solution": "Add aria-label or aria-labelledby attributes",
+        "test": "Check for proper ARIA attributes in test"
+    },
+    {
+        "id": "poor_color_contrast",
+        "issue": "Text with insufficient color contrast",
+        "solution": "Adjust colors to meet WCAG contrast requirements",
+        "test": "Use testComponentContrast() to verify"
+    },
+    {
+        "id": "keyboard_inaccessible",
+        "issue": "Interactive elements not keyboard accessible",
+        "solution": "Add proper tabindex and keyboard event handlers",
+        "test": "Use testComponentKeyboard() to verify"
+    },
+    {
+        "id": "missing_semantic_structure",
+        "issue": "Incorrect HTML semantic structure",
+        "solution": "Use proper heading hierarchy and semantic elements",
+        "test": "Use testComponentHeadings() to verify"
+    }
+]
+
+## Testing Configuration
+
+@configuration {
+    "axe_core": {
+        "rules": [
+            "color-contrast",
+            "image-alt", 
+            "input-image-alt",
+            "label",
+            "link-name",
+            "list",
+            "listitem",
+            "region",
+            "skip-link",
+            "tabindex"
+        ],
+        "tags": ["wcag2a", "wcag2aa", "best-practice"],
+        "impact": "moderate"
+    },
+    "setup": {
+        "file": "src/tests/setup.ts",
+        "document_lang": "en",
+        "document_title": "NotT - Horror Tabletop Game"
+    }
+}
+
+## Validation Checklist
+
+@validation {
+    "required": [
+        "Accessibility test file exists for component",
+        "All required test cases are implemented",
+        "Tests pass without accessibility violations",
+        "Component variants are tested",
+        "Component states are tested",
+        "Keyboard navigation works",
+        "Color contrast meets requirements",
+        "ARIA attributes are properly set"
+    ],
+    "recommended": [
+        "Screen reader compatibility testing",
+        "Focus management testing",
+        "Error state accessibility",
+        "Loading state accessibility",
+        "Custom accessibility options"
+    ]
+}
+
+## Running Accessibility Tests
+
+@commands {
+    "run_all_tests": "npm run test",
+    "run_a11y_only": "npm run test tests/**/*.a11y.spec.ts",
+    "run_with_coverage": "npm run test:coverage",
+    "watch_mode": "npm run test:watch"
+}
+
+## Integration with CI/CD
+
+@ci_integration {
+    "automated_testing": "Accessibility tests run automatically with all tests",
+    "failure_handling": "Accessibility violations fail the build",
+    "reporting": "Accessibility violations are reported in test output",
+    "coverage": "Accessibility test coverage is tracked"
+}
+
+@version "1.0.0"
+@last_updated "2024-12-19"

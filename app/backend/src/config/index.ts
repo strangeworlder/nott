@@ -40,6 +40,9 @@ export const config = {
 		origin: process.env.FRONTEND_URL || "http://localhost:3013",
 		credentials: true,
 	},
+
+	// Sentry error tracking
+	sentryDsn: process.env.SENTRY_DSN || "",
 } as const;
 
 export type Config = typeof config;

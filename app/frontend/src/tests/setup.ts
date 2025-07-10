@@ -1,4 +1,12 @@
 import { vi } from 'vitest';
+import { setupAccessibilityTesting } from './utils/accessibility';
+
+// Setup accessibility testing
+setupAccessibilityTesting();
+
+// Setup proper HTML structure for accessibility testing
+document.documentElement.lang = 'en';
+document.title = 'NotT - Horror Tabletop Game';
 
 // Mock environment variables
 vi.stubEnv('VITE_API_BASE_URL', 'http://localhost:4013');
